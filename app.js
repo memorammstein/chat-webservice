@@ -56,6 +56,16 @@ router.post('/relay', function (req, res) {
   }
 });
 
+router.post('/reset-relays', function (req, res) {
+  MongoClient.connect(config.db, function(err, db) {
+    assert.equal(null, err);
+    var relays = db.collection('relays');
+    relays.remove({});
+    db.close();
+    res.status(200).send("all relays have been removed from the database");
+  });
+});
+
 router.get('/user/:user_id', function (req, res) {
   MongoClient.connect(config.db, function(err, db) {
     assert.equal(null, err);
