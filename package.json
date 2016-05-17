@@ -1,0 +1,23 @@
+{
+  "name": "chat-webservice",
+  "version": "0.0.1",
+  "description": "Basic web service for user signup/login, relay signup and listing, and stuff",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "web service"
+  ],
+  "author": "Guillermo Jiménez",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.15.1",
+    "express": "^4.13.4",
+    "express-jwt": "^3.4.0",
+    "jsonwebtoken": "^6.2.0",
+    "mongoose": "^4.4.17",
+    "morgan": "^1.7.0"
+  }
+}
