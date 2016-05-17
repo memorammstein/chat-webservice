@@ -62,24 +62,60 @@ router.post('/reset-relays', function (req, res) {
     var relays = db.collection('relays');
     relays.remove({});
     db.close();
-    res.status(200).send("all relays have been removed from the database");
+    res.status(200).send("all relays have been removed from the database ");
+  });
+});
+
+router.get('/users', function (req, res) {
+  MongoClient.connect(config.db, function(err, db) {
+    assert.equal(null, err);
+    var users = db.collection('users');
+    users.find({}).toArray(function (error, result) {
+      console.log(result);
+      db.close();
+      res.status(200).send(result);
+    });
   });
 });
 
 router.get('/user/:user_id', function (req, res) {
   MongoClient.connect(config.db, function(err, db) {
     assert.equal(null, err);
-    db.close();
+    var users = db.collection('users');
+    users.findOne({_id:req.params.user_id}, function (error, document) {
+      db.close();
+      if (error) {
+        res.status(400).send("couldn't find the given user by _id");
+      } else {
+        res.status(200).send(document);
+      }
+    });
   });
-  res.status(200).send("get user data");
 });
 
 router.post('/user', function (req, res) {
+  if (Object.keys(req.body).length) {
+    MongoClient.connect(config.db, function(err, db) {
+      assert.equal(null, err);
+      var users = db.collection('users');
+      req.body.time = Date.now();
+      users.update({username: req.body.username},req.body, {upsert: true});
+      db.close();
+    });
+    res.status(200).send("correct, will post user info to database");
+  } else {
+    res.status(400).send("wrong body or content-type header missing");
+  }
+});
+
+router.post('/reset-users', function (req, res) {
   MongoClient.connect(config.db, function(err, db) {
     assert.equal(null, err);
+    var users = db.collection('users');
+    users.remove({});
     db.close();
+    res.status(200).send("all users have been removed from the database ");
   });
-  res.status(200).send("sign/update user, if user_id: updates else signs");
 });
 
 app.use('/', router);
