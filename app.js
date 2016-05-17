@@ -82,11 +82,13 @@ router.get('/user/:user_id', function (req, res) {
   MongoClient.connect(config.db, function(err, db) {
     assert.equal(null, err);
     var users = db.collection('users');
-    users.findOne({_id:req.params.user_id}, function (error, document) {
+    users.findOne({_id:mongodb.ObjectId(req.params.user_id)}, function (error, document) {
       db.close();
       if (error) {
+        console.log(error);
         res.status(400).send("couldn't find the given user by _id");
       } else {
+        console.log(document);
         res.status(200).send(document);
       }
     });
