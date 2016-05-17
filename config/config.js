@@ -11,7 +11,7 @@ var config = {
   production: {
     env: env,
     port: process.env.PORT,
-    db: process.env.MONGOLAB_URI,
+    db: process.env.MONGODB_URI,
     secret: process.env.SECRET
   }
 };
