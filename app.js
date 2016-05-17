@@ -32,25 +32,33 @@ router.get('/api', function (req, res) {
 router.get('/relays', function (req, res) {
   MongoClient.connect(config.db, function(err, db) {
     assert.equal(null, err);
-    console.log("Connected correctly to server");
-    db.close();
+    var relays = db.collection('relays');
+    relays.find({}).toArray(function (error, result) {
+      console.log(result);
+      db.close();
+      res.status(200).send(result);
+    });
   });
-  res.status(200).send("relays list");
 });
 
 router.post('/relay', function (req, res) {
-  MongoClient.connect(config.db, function(err, db) {
-    assert.equal(null, err);
-    console.log("Connected correctly to server");
-    db.close();
-  });
-  res.status(200).send("log/update relay, needs name and ip");
+  if (Object.keys(req.body).length) {
+    MongoClient.connect(config.db, function(err, db) {
+      assert.equal(null, err);
+      var relays = db.collection('relays');
+      req.body.time = Date.now();
+      relays.update({name: req.body.name},req.body, {upsert: true});
+      db.close();
+    });
+    res.status(200).send("correct, will post relay info to database");
+  } else {
+    res.status(400).send("wrong body or content-type header missing");
+  }
 });
 
 router.get('/user/:user_id', function (req, res) {
   MongoClient.connect(config.db, function(err, db) {
     assert.equal(null, err);
-    console.log("Connected correctly to server");
     db.close();
   });
   res.status(200).send("get user data");
@@ -59,7 +67,6 @@ router.get('/user/:user_id', function (req, res) {
 router.post('/user', function (req, res) {
   MongoClient.connect(config.db, function(err, db) {
     assert.equal(null, err);
-    console.log("Connected correctly to server");
     db.close();
   });
   res.status(200).send("sign/update user, if user_id: updates else signs");
